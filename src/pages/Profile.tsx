@@ -20,8 +20,6 @@ import { useLoginActions } from '@/hooks/useLoginActions';
 import { nip19 } from 'nostr-tools';
 import { useState } from 'react';
 import { useToast } from '@/hooks/useToast';
-import { EditProfileForm } from '@/components/EditProfileForm';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,7 +27,6 @@ export default function Profile() {
   const { user } = useCurrentUser();
   const { logout } = useLoginActions();
   const author = useAuthor(user?.pubkey || '');
-  const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [copiedNpub, setCopiedNpub] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -86,7 +83,7 @@ export default function Profile() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setEditProfileOpen(true)}
+              onClick={() => navigate('/profile/edit')}
               className="h-9 w-9"
             >
               <Edit2 className="h-5 w-5" />
@@ -168,7 +165,7 @@ export default function Profile() {
             <Button
               variant="outline"
               className="w-full justify-start"
-              onClick={() => setEditProfileOpen(true)}
+              onClick={() => navigate('/profile/edit')}
             >
               <Edit2 className="h-4 w-4 mr-3" />
               Edit Profile
@@ -193,16 +190,6 @@ export default function Profile() {
             </Button>
           </div>
         </div>
-
-        {/* Edit Profile Dialog */}
-        <Dialog open={editProfileOpen} onOpenChange={setEditProfileOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Edit Profile</DialogTitle>
-            </DialogHeader>
-            <EditProfileForm />
-          </DialogContent>
-        </Dialog>
       </div>
 
       <BottomNavigation />

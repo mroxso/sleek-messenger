@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNostrPublish } from '@/hooks/useNostrPublish';
 import { useToast } from '@/hooks/useToast';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -24,6 +25,10 @@ import { useUploadFile } from '@/hooks/useUploadFile';
 
 export const EditProfileForm: React.FC = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const isEditPage = location.pathname === '/profile/edit';
 
   const { user, metadata } = useCurrentUser();
   const { mutateAsync: publishEvent, isPending } = useNostrPublish();
@@ -114,6 +119,11 @@ export const EditProfileForm: React.FC = () => {
         title: 'Success',
         description: 'Your profile has been updated',
       });
+      
+      // If we're on the edit page, navigate back to the profile page
+      if (isEditPage) {
+        navigate('/profile');
+      }
     } catch (error) {
       console.error('Failed to update profile:', error);
       toast({
@@ -254,16 +264,28 @@ export const EditProfileForm: React.FC = () => {
           )}
         />
 
-        <Button 
-          type="submit" 
-          className="w-full md:w-auto" 
-          disabled={isPending || isUploading}
-        >
-          {(isPending || isUploading) && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <div className="flex justify-between w-full">
+          {isEditPage && (
+            <Button 
+              type="button" 
+              variant="outline"
+              onClick={() => navigate('/profile')}
+              className="md:w-auto" 
+            >
+              Cancel
+            </Button>
           )}
-          Save Profile
-        </Button>
+          <Button 
+            type="submit" 
+            className={isEditPage ? "md:w-auto" : "w-full md:w-auto"} 
+            disabled={isPending || isUploading}
+          >
+            {(isPending || isUploading) && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Save Profile
+          </Button>
+        </div>
       </form>
     </Form>
   );
