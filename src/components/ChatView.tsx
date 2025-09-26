@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useChat, useChatMessageDecryption, type ChatMessage } from '@/hooks/useChat';
 import { useAuthor } from '@/hooks/useAuthor';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useTruncateNostrId } from '@/hooks/useTruncateNostrId';
 import { genUserName } from '@/lib/genUserName';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,12 @@ interface MessageBubbleProps {
 
 function MessageBubble({ message, contactPubkey, contactDisplayName, contactPicture }: MessageBubbleProps) {
   const { decryptedContent, isDecrypting } = useChatMessageDecryption(message, contactPubkey);
+  const { truncateNostrId } = useTruncateNostrId();
+
+  // Process the decrypted content to truncate any Nostr identifiers
+  const processedContent = decryptedContent ? 
+    decryptedContent.replace(/(nostr:[a-z]+1[023456789acdefghjklmnpqrstuvwxyz]+)/g, (match) => truncateNostrId(match)) : 
+    decryptedContent;
 
   return (
     <div className={cn(
@@ -57,7 +64,7 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
           {isDecrypting ? (
             <span className="animate-pulse opacity-70">Decrypting...</span>
           ) : (
-            decryptedContent || 'Failed to decrypt message'
+            processedContent || 'Failed to decrypt message'
           )}
         </p>
 

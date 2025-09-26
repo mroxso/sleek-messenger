@@ -3,6 +3,7 @@ import { type NostrEvent } from '@nostrify/nostrify';
 import { Link } from 'react-router-dom';
 import { nip19 } from 'nostr-tools';
 import { useAuthor } from '@/hooks/useAuthor';
+import { useTruncateNostrId } from '@/hooks/useTruncateNostrId';
 import { genUserName } from '@/lib/genUserName';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +16,9 @@ interface NoteContentProps {
 export function NoteContent({
   event, 
   className, 
-}: NoteContentProps) {  
+}: NoteContentProps) {
+  const { truncateNostrId } = useTruncateNostrId();
+  
   // Process the content to render mentions, links, etc.
   const content = useMemo(() => {
     const text = event.content;
@@ -62,14 +65,16 @@ export function NoteContent({
               <NostrMention key={`mention-${keyCounter++}`} pubkey={pubkey} />
             );
           } else {
-            // For other types, just show as a link
+            // For other types, just show as a link with truncated display
+            const truncatedDisplay = truncateNostrId(fullMatch);
             parts.push(
               <Link 
                 key={`nostr-${keyCounter++}`}
                 to={`/${nostrId}`}
                 className="text-blue-500 hover:underline"
+                title={fullMatch} // Show full identifier on hover
               >
-                {fullMatch}
+                {truncatedDisplay}
               </Link>
             );
           }
@@ -105,7 +110,7 @@ export function NoteContent({
     }
     
     return parts;
-  }, [event]);
+  }, [event, truncateNostrId]);
 
   return (
     <div className={cn("whitespace-pre-wrap break-words", className)}>
