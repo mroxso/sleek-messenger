@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { LoginArea } from '@/components/auth/LoginArea';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { ChatList } from '@/components/ChatList';
+import { NewChatDialog } from '@/components/NewChatDialog';
 
 const Index = () => {
   const { user } = useCurrentUser();
@@ -40,9 +41,12 @@ const Index = () => {
         <div className="sticky top-0 z-10 bg-background border-b border-border">
           <div className="flex items-center justify-between p-4">
             <h1 className="text-xl font-semibold text-foreground">Chats</h1>
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <MoreVertical className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center space-x-2">
+              <NewChatDialog />
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
 
