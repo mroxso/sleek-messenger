@@ -6,6 +6,7 @@ import { createHead, UnheadProvider } from '@unhead/react/client';
 import { InferSeoMetaPlugin } from '@unhead/addons';
 import { Suspense } from 'react';
 import NostrProvider from '@/components/NostrProvider';
+import { Nip65Router } from '@/components/Nip65Router';
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NostrLoginProvider } from '@nostrify/react/login';
@@ -48,14 +49,16 @@ export function App() {
         <QueryClientProvider client={queryClient}>
           <NostrLoginProvider storageKey='nostr:login'>
             <NostrProvider>
-              <NWCProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  <Suspense>
-                    <AppRouter />
-                  </Suspense>
-                </TooltipProvider>
-              </NWCProvider>
+              <Nip65Router>
+                <NWCProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    <Suspense>
+                      <AppRouter />
+                    </Suspense>
+                  </TooltipProvider>
+                </NWCProvider>
+              </Nip65Router>
             </NostrProvider>
           </NostrLoginProvider>
         </QueryClientProvider>
