@@ -16,7 +16,6 @@ import {
   Check
 } from 'lucide-react';
 import { genUserName } from '@/lib/genUserName';
-import { RelaySelector } from '@/components/RelaySelector';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import { nip19 } from 'nostr-tools';
 import { useState } from 'react';
@@ -24,6 +23,7 @@ import { useToast } from '@/hooks/useToast';
 import { EditProfileForm } from '@/components/EditProfileForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { BottomNavigation } from '@/components/BottomNavigation';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { user } = useCurrentUser();
@@ -32,6 +32,7 @@ export default function Profile() {
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [copiedNpub, setCopiedNpub] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const metadata = author.data?.metadata;
   const displayName = metadata?.display_name || metadata?.name || genUserName(user?.pubkey || '');
@@ -173,7 +174,11 @@ export default function Profile() {
               Edit Profile
             </Button>
 
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/settings')}
+            >
               <Settings className="h-4 w-4 mr-3" />
               Settings
             </Button>
@@ -186,12 +191,6 @@ export default function Profile() {
               <LogOut className="h-4 w-4 mr-3" />
               Log Out
             </Button>
-            
-            {/* Relay Selector */}
-            <div className="pt-2">
-              <h3 className="text-sm font-medium mb-2">Relay</h3>
-              <RelaySelector className="w-full" />
-            </div>
           </div>
         </div>
 
