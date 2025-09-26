@@ -46,7 +46,7 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
 
       {/* Message content */}
       <div className={cn(
-        "rounded-2xl px-4 py-2 break-words",
+        "rounded-2xl px-4 py-2 break-words break-all overflow-hidden",
         message.isFromMe 
           ? "bg-primary text-primary-foreground rounded-br-md"
           : "bg-muted rounded-bl-md"
@@ -60,7 +60,7 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
           )}
         </div>
         
-        <p className="text-sm">
+        <p className="text-sm overflow-wrap-anywhere hyphens-auto">
           {isDecrypting ? (
             <span className="animate-pulse opacity-70">Decrypting...</span>
           ) : (

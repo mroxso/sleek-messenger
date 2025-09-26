@@ -93,5 +93,14 @@ export default {
 			}
 		}
 	},
-	plugins: [tailwindcssAnimate],
+	plugins: [
+		tailwindcssAnimate,
+		function({ addUtilities }: { addUtilities: (utilities: Record<string, Record<string, string>>) => void }) {
+			addUtilities({
+				'.overflow-wrap-anywhere': {
+					'overflow-wrap': 'anywhere',
+				}
+			});
+		}
+	],
 } satisfies Config;
