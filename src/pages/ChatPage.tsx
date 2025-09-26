@@ -116,7 +116,7 @@ const ChatPage = () => {
       <div className="w-1/3 border-r border-border bg-muted/20 flex flex-col h-full">
         <div className="sticky top-0 z-10 bg-background border-b border-border p-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-foreground">Chats</h2>
+            <h2 className="text-xl font-semibold text-foreground">Chats</h2>
             <Button
               variant="outline"
               size="sm"
