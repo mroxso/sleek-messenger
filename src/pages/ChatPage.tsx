@@ -5,9 +5,10 @@ import { useAuthor } from '@/hooks/useAuthor';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { genUserName } from '@/lib/genUserName';
 import { ChatView } from '@/components/ChatView';
+import { ChatList } from '@/components/ChatList';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft, MoreVertical } from 'lucide-react';
+import { ArrowLeft, MoreVertical, MessageCircle } from 'lucide-react';
 import { LoginArea } from '@/components/auth/LoginArea';
 import { Card, CardContent } from '@/components/ui/card';
 import { RelaySelector } from '@/components/RelaySelector';
@@ -110,10 +111,10 @@ const ChatPage = () => {
 
   // Desktop layout: Split view with sidebar space
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left sidebar placeholder (1/3 width) */}
-      <div className="w-1/3 border-r border-border bg-muted/20">
-        <div className="sticky top-0 bg-background border-b border-border p-4">
+    <div className="h-screen bg-background flex overflow-hidden">
+      {/* Left sidebar with chat list (1/3 width) */}
+      <div className="w-1/3 border-r border-border bg-muted/20 flex flex-col h-full">
+        <div className="sticky top-0 z-10 bg-background border-b border-border p-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-foreground">Chats</h2>
             <Button
@@ -121,27 +122,22 @@ const ChatPage = () => {
               size="sm"
               onClick={() => navigate('/')}
             >
-              Back to List
+              Back
             </Button>
           </div>
         </div>
         
-        <div className="p-4">
-          <Card className="border-dashed">
-            <CardContent className="py-8 px-6 text-center">
-              <div className="max-w-sm mx-auto space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Chat overview will be displayed here in a future update
-                </p>
-                <RelaySelector className="w-full" />
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex-1 overflow-y-auto">
+          <ChatList activeChatPubkey={pubkey} />
+        </div>
+        
+        <div className="p-3 border-t border-border sticky bottom-0 bg-background">
+          <RelaySelector className="w-full" />
         </div>
       </div>
 
       {/* Right chat area (2/3 width) */}
-      <div className="flex-1 flex flex-col h-screen">
+      <div className="flex-1 flex flex-col h-full">
         {/* Desktop Header */}
         <div className="sticky top-0 z-10 bg-background border-b border-border">
           <div className="flex items-center justify-between p-4">
@@ -172,7 +168,7 @@ const ChatPage = () => {
         </div>
 
         {/* Chat Content */}
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden">
           <ChatView contactPubkey={pubkey} />
         </div>
       </div>
