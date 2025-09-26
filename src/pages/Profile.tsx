@@ -16,6 +16,7 @@ import {
   Check
 } from 'lucide-react';
 import { genUserName } from '@/lib/genUserName';
+import { RelaySelector } from '@/components/RelaySelector';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import { nip19 } from 'nostr-tools';
 import { useState } from 'react';
@@ -185,6 +186,12 @@ export default function Profile() {
               <LogOut className="h-4 w-4 mr-3" />
               Log Out
             </Button>
+            
+            {/* Relay Selector */}
+            <div className="pt-2">
+              <h3 className="text-sm font-medium mb-2">Relay</h3>
+              <RelaySelector className="w-full" />
+            </div>
           </div>
         </div>
 
