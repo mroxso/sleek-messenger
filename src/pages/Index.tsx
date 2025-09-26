@@ -5,13 +5,14 @@ import { useNostr } from '@nostrify/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Search, MoreVertical } from 'lucide-react';
+import { MessageCircle, Search, MoreVertical, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuthor } from '@/hooks/useAuthor';
 import { genUserName } from '@/lib/genUserName';
 import type { NostrEvent } from '@nostrify/nostrify';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LoginArea } from '@/components/auth/LoginArea';
+import { useDecryptMessage } from '@/hooks/useDecryptMessage';
 
 interface ChatItemProps {
   pubkey: string;
@@ -23,6 +24,12 @@ function ChatItem({ pubkey, lastMessage, timestamp }: ChatItemProps) {
   const author = useAuthor(pubkey);
   const metadata = author.data?.metadata;
   const displayName = metadata?.display_name || metadata?.name || genUserName(pubkey);
+  
+  // Decrypt the last message if it's encrypted
+  const { data: decryptedMessage, isLoading: isDecrypting } = useDecryptMessage(lastMessage, pubkey);
+  
+  // Check if this is an encrypted message
+  const isEncrypted = lastMessage?.kind === 4 || lastMessage?.kind === 1059;
 
   return (
     <div className="flex items-center space-x-3 p-4 hover:bg-muted/50 cursor-pointer border-b border-border/50 last:border-b-0">
@@ -47,9 +54,18 @@ function ChatItem({ pubkey, lastMessage, timestamp }: ChatItemProps) {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground truncate mt-1">
-          {lastMessage?.content || 'No messages yet'}
-        </p>
+        <div className="flex items-center space-x-1 mt-1">
+          {isEncrypted && (
+            <Lock className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+          )}
+          <p className="text-sm text-muted-foreground truncate">
+            {isDecrypting ? (
+              <span className="animate-pulse">Decrypting...</span>
+            ) : (
+              decryptedMessage || lastMessage?.content || 'No messages yet'
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -89,19 +105,32 @@ const Index = () => {
       if (!user) return [];
       const signal = AbortSignal.any([c.signal, AbortSignal.timeout(1500)]);
       
-      // Get recent direct messages and mentions
+      // Get recent direct messages (both NIP-04 legacy and NIP-17 modern)
       const events = await nostr.query([
+        // NIP-04 legacy encrypted DMs (deprecated but still in use)
         { kinds: [4], authors: [user.pubkey], limit: 50 },
-        { kinds: [4], '#p': [user.pubkey], limit: 50 }
+        { kinds: [4], '#p': [user.pubkey], limit: 50 },
+        // NIP-17 gift wraps for modern encrypted DMs
+        { kinds: [1059], '#p': [user.pubkey], limit: 50 },
       ], { signal });
 
       // Extract unique contacts from the events
       const contacts = new Map<string, { pubkey: string; lastMessage?: NostrEvent; timestamp: number }>();
       
       events.forEach(event => {
-        const contactPubkey = event.kind === 4 && event.pubkey === user.pubkey 
-          ? event.tags.find(tag => tag[0] === 'p')?.[1]
-          : event.pubkey;
+        let contactPubkey: string | undefined;
+        
+        if (event.kind === 4) {
+          // NIP-04 encrypted direct message
+          contactPubkey = event.pubkey === user.pubkey 
+            ? event.tags.find(tag => tag[0] === 'p')?.[1]
+            : event.pubkey;
+        } else if (event.kind === 1059) {
+          // NIP-17 gift wrap - the sender is the contact
+          // Note: For full NIP-17 support, we'd need to decrypt the gift wrap
+          // to get the actual message, but for now we can at least track the conversation
+          contactPubkey = event.pubkey !== user.pubkey ? event.pubkey : undefined;
+        }
           
         if (contactPubkey && contactPubkey !== user.pubkey) {
           const existing = contacts.get(contactPubkey);
