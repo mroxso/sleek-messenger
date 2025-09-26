@@ -138,24 +138,57 @@ export function ChatView({ contactPubkey }: ChatViewProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center">
-          <p className="text-muted-foreground mb-4">
-            You must be signed in to chat
-          </p>
+      <div className="flex flex-col h-full">
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">
+              You must be signed in to chat
+            </p>
+          </div>
+        </div>
+        
+        {/* Message input placeholder - disabled with sticky positioning */}
+        <div className="border-t border-border bg-background p-4 sticky bottom-0 left-0 right-0 w-full">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Sign in to start chatting..."
+              className="flex-1"
+              disabled={true}
+            />
+            <Button
+              size="icon"
+              disabled={true}
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   if (isLoading) {
-    return <MessagesSkeleton />;
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-y-auto">
+          <MessagesSkeleton />
+        </div>
+        
+        {/* Message input placeholder with sticky positioning */}
+        <div className="border-t border-border bg-background p-4 sticky bottom-0 left-0 right-0 w-full">
+          <div className="flex gap-2">
+            <Skeleton className="h-10 flex-1" />
+            <Skeleton className="h-10 w-10" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex flex-col">
-        {/* Empty state */}
+      <div className="flex flex-col h-full">
+        {/* Empty state - will take available space but shrink if needed */}
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="text-center max-w-sm space-y-4">
             <Avatar className="h-16 w-16 mx-auto">
@@ -178,8 +211,8 @@ export function ChatView({ contactPubkey }: ChatViewProps) {
           </div>
         </div>
 
-        {/* Message input */}
-        <div className="border-t border-border bg-background p-4">
+        {/* Message input with sticky positioning */}
+        <div className="border-t border-border bg-background p-4 sticky bottom-0 left-0 right-0 w-full">
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <Input
               value={inputMessage}
@@ -206,10 +239,10 @@ export function ChatView({ contactPubkey }: ChatViewProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
-        <div className="space-y-4 p-4">
+        <div className="space-y-4 p-4 pb-4">
           {messages.map((message) => (
             <MessageBubble
               key={message.id}
@@ -223,8 +256,8 @@ export function ChatView({ contactPubkey }: ChatViewProps) {
         </div>
       </div>
 
-      {/* Message input */}
-      <div className="border-t border-border bg-background p-4">
+      {/* Message input - fixed at the bottom with sticky positioning */}
+      <div className="border-t border-border bg-background p-4 sticky bottom-0 left-0 right-0 w-full">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <Input
             value={inputMessage}

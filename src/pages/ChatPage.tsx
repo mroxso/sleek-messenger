@@ -61,7 +61,7 @@ const ChatPage = () => {
   if (isMobile) {
     // Mobile layout: Full screen chat with header
     return (
-      <div className="min-h-screen bg-background flex flex-col pb-20">
+      <div className="h-screen bg-background flex flex-col">
         {/* Mobile Header */}
         <div className="sticky top-0 z-10 bg-background border-b border-border">
           <div className="flex items-center justify-between p-4">
@@ -100,8 +100,8 @@ const ChatPage = () => {
           </div>
         </div>
 
-        {/* Chat Content */}
-        <div className="flex-1">
+        {/* Chat Content - Take remaining height */}
+        <div className="flex-1 flex flex-col overflow-hidden">
           <ChatView contactPubkey={pubkey} />
         </div>
       </div>
@@ -141,7 +141,7 @@ const ChatPage = () => {
       </div>
 
       {/* Right chat area (2/3 width) */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-screen">
         {/* Desktop Header */}
         <div className="sticky top-0 z-10 bg-background border-b border-border">
           <div className="flex items-center justify-between p-4">
@@ -172,7 +172,7 @@ const ChatPage = () => {
         </div>
 
         {/* Chat Content */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden relative">
           <ChatView contactPubkey={pubkey} />
         </div>
       </div>
