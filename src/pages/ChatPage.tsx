@@ -95,9 +95,9 @@ const ChatPage = () => {
               </div>
             </div>
             
-            <Button variant="ghost" size="icon" className="h-9 w-9">
+            {/* <Button variant="ghost" size="icon" className="h-9 w-9">
               <MoreVertical className="h-5 w-5" />
-            </Button>
+            </Button> */}
           </div>
         </div>
 
@@ -161,9 +161,9 @@ const ChatPage = () => {
               </div>
             </div>
             
-            <Button variant="ghost" size="icon" className="h-9 w-9">
+            {/* <Button variant="ghost" size="icon" className="h-9 w-9">
               <MoreVertical className="h-5 w-5" />
-            </Button>
+            </Button> */}
           </div>
         </div>
 
