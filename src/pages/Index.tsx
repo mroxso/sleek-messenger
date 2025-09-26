@@ -2,6 +2,7 @@ import { useSeoMeta } from '@unhead/react';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useQuery } from '@tanstack/react-query';
 import { useNostr } from '@nostrify/react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,7 @@ interface ChatItemProps {
 }
 
 function ChatItem({ pubkey, lastMessage, timestamp }: ChatItemProps) {
+  const navigate = useNavigate();
   const author = useAuthor(pubkey);
   const metadata = author.data?.metadata;
   const displayName = metadata?.display_name || metadata?.name || genUserName(pubkey);
@@ -31,8 +33,15 @@ function ChatItem({ pubkey, lastMessage, timestamp }: ChatItemProps) {
   // Check if this is an encrypted message
   const isEncrypted = lastMessage?.kind === 4 || lastMessage?.kind === 1059;
 
+  const handleClick = () => {
+    navigate(`/chat/${pubkey}`);
+  };
+
   return (
-    <div className="flex items-center space-x-3 p-4 hover:bg-muted/50 cursor-pointer border-b border-border/50 last:border-b-0">
+    <div 
+      className="flex items-center space-x-3 p-4 hover:bg-muted/50 cursor-pointer border-b border-border/50 last:border-b-0 transition-colors"
+      onClick={handleClick}
+    >
       <Avatar className="h-12 w-12 flex-shrink-0">
         <AvatarImage src={metadata?.picture} alt={displayName} />
         <AvatarFallback className="bg-primary text-primary-foreground text-sm">
@@ -91,6 +100,7 @@ function ChatListSkeleton() {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
   const { user } = useCurrentUser();
   const { nostr } = useNostr();
 
