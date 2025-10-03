@@ -5,6 +5,7 @@ import { RelaySelector } from '@/components/RelaySelector';
 import { useTheme } from '@/hooks/useTheme';
 import { ArrowLeft, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import packageJson from '../../package.json';
 import { BottomNavigation } from '@/components/BottomNavigation';
 
 export default function SettingsPage() {
@@ -71,7 +72,16 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Additional settings sections can be added here */}
+          {/* Version Information */}
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="font-medium mb-4">About</h2>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Version</span>
+                <span className="text-sm font-mono">{packageJson.version}</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
