@@ -17,6 +17,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from '@/components/ui/resizable';
 import { useEffect } from 'react';
 import { nip19 } from 'nostr-tools';
 
@@ -164,79 +169,87 @@ const ChatPage = () => {
     );
   }
 
-  // Desktop layout: Split view with sidebar space
+  // Desktop layout: Split view with resizable panels
   return (
-    <div className="h-screen bg-background flex overflow-hidden">
-      {/* Left sidebar with chat list (1/3 width) */}
-      <div className="w-1/3 border-r border-border bg-muted/20 flex flex-col h-full">
-        <div className="sticky top-0 z-10 bg-background border-b border-border p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">Chats</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/')}
-            >
-              Back
-            </Button>
-          </div>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto">
-          <ChatList activeChatPubkey={pubkey} />
-        </div>
-        
-        <div className="p-3 border-t border-border sticky bottom-0 bg-background">
-          <RelaySelector className="w-full" />
-        </div>
-      </div>
-
-      {/* Right chat area (2/3 width) */}
-      <div className="flex-1 flex flex-col h-full">
-        {/* Desktop Header */}
-        <div className="sticky top-0 z-10 bg-background border-b border-border">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center space-x-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={metadata?.picture} alt={displayName} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                  {displayName.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div>
-                <h1 className="font-semibold text-foreground">
-                  {displayName}
-                </h1>
-                {metadata?.nip05 && (
-                  <p className="text-sm text-muted-foreground">
-                    {metadata.nip05}
-                  </p>
-                )}
+    <div className="h-screen bg-background overflow-hidden">
+      <ResizablePanelGroup direction="horizontal">
+        {/* Left sidebar with chat list */}
+        <ResizablePanel defaultSize={33} minSize={25} maxSize={50}>
+          <div className="bg-muted/20 flex flex-col h-full">
+            <div className="sticky top-0 z-10 bg-background border-b border-border p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Chats</h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/')}
+                >
+                  Back
+                </Button>
               </div>
             </div>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <MoreVertical className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleViewProfile}>
-                  <User className="h-4 w-4 mr-2" />
-                  View Profile
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex-1 overflow-y-auto">
+              <ChatList activeChatPubkey={pubkey} />
+            </div>
+            
+            <div className="p-3 border-t border-border sticky bottom-0 bg-background">
+              <RelaySelector className="w-full" />
+            </div>
           </div>
-        </div>
+        </ResizablePanel>
 
-        {/* Chat Content */}
-        <div className="flex-1 overflow-hidden">
-          <ChatView contactPubkey={pubkey} />
-        </div>
-      </div>
+        <ResizableHandle withHandle />
+
+        {/* Right chat area */}
+        <ResizablePanel defaultSize={67} minSize={50}>
+          <div className="flex flex-col h-full">
+            {/* Desktop Header */}
+            <div className="sticky top-0 z-10 bg-background border-b border-border">
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={metadata?.picture} alt={displayName} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                      {displayName.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div>
+                    <h1 className="font-semibold text-foreground">
+                      {displayName}
+                    </h1>
+                    {metadata?.nip05 && (
+                      <p className="text-sm text-muted-foreground">
+                        {metadata.nip05}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9">
+                      <MoreVertical className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleViewProfile}>
+                      <User className="h-4 w-4 mr-2" />
+                      View Profile
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            {/* Chat Content */}
+            <div className="flex-1 overflow-hidden">
+              <ChatView contactPubkey={pubkey} />
+            </div>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
