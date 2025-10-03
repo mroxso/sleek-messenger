@@ -8,10 +8,17 @@ import { ChatView } from '@/components/ChatView';
 import { ChatList } from '@/components/ChatList';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MoreVertical, User } from 'lucide-react';
 import { LoginArea } from '@/components/auth/LoginArea';
 import { RelaySelector } from '@/components/RelaySelector';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useEffect } from 'react';
+import { nip19 } from 'nostr-tools';
 
 const ChatPage = () => {
   const { pubkey } = useParams<{ pubkey: string }>();
@@ -22,6 +29,13 @@ const ChatPage = () => {
   
   const metadata = author.data?.metadata;
   const displayName = metadata?.display_name || metadata?.name || genUserName(pubkey || '');
+  const npub = pubkey ? nip19.npubEncode(pubkey) : '';
+
+  const handleViewProfile = () => {
+    if (npub) {
+      navigate(`/${npub}`);
+    }
+  };
 
   useSeoMeta({
     title: `Chat with ${displayName} - Sleek`,
@@ -94,9 +108,19 @@ const ChatPage = () => {
               </div>
             </div>
             
-            {/* <Button variant="ghost" size="icon" className="h-9 w-9">
-              <MoreVertical className="h-5 w-5" />
-            </Button> */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleViewProfile}>
+                  <User className="h-4 w-4 mr-2" />
+                  View Profile
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -160,9 +184,19 @@ const ChatPage = () => {
               </div>
             </div>
             
-            {/* <Button variant="ghost" size="icon" className="h-9 w-9">
-              <MoreVertical className="h-5 w-5" />
-            </Button> */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleViewProfile}>
+                  <User className="h-4 w-4 mr-2" />
+                  View Profile
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
