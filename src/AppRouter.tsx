@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ScrollToTop } from "./components/ScrollToTop";
-import { BottomNavigation } from "./components/BottomNavigation";
 
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";

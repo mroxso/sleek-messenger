@@ -1,9 +1,10 @@
 import { nip19 } from 'nostr-tools';
+import type { NostrEvent, NostrFilter } from '@nostrify/nostrify';
 
 // Regex patterns for different Nostr identifier formats
 const NPUB_REGEX = /^npub1[023456789acdefghjklmnpqrstuvwxyz]{58}$/;
 const HEX_PUBKEY_REGEX = /^[0-9a-f]{64}$/;
-const NIP05_REGEX = /^[\w\.\-]+@[\w\.\-]+$/;
+const NIP05_REGEX = /^[\w.-]+@[\w.-]+$/;
 
 export interface NostrIdentifierResult {
   pubkey: string | null;
@@ -16,7 +17,7 @@ export interface NostrIdentifierResult {
  */
 export async function resolveNostrIdentifier(
   identifier: string, 
-  queryFn?: (filter: any) => Promise<any[]>
+  queryFn?: (filter: NostrFilter) => Promise<NostrEvent[]>
 ): Promise<NostrIdentifierResult> {
   if (!identifier?.trim()) {
     return { pubkey: null, error: 'No identifier provided' };
@@ -29,7 +30,7 @@ export async function resolveNostrIdentifier(
       if (type === 'npub') {
         return { pubkey: data, error: null };
       }
-    } catch (e) {
+    } catch {
       return { pubkey: null, error: 'Invalid npub format' };
     }
   }
@@ -65,9 +66,10 @@ export async function resolveNostrIdentifier(
 
       return { pubkey, error: null };
     } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error';
       return { 
         pubkey: null, 
-        error: `Failed to resolve NIP-05 address: ${e.message}` 
+        error: `Failed to resolve NIP-05 address: ${message}` 
       };
     }
   }
@@ -105,9 +107,10 @@ export async function resolveNostrIdentifier(
         };
       }
     } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error';
       return { 
         pubkey: null, 
-        error: `Username search failed: ${e.message}`
+        error: `Username search failed: ${message}`
       };
     }
   }

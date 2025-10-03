@@ -8,9 +8,8 @@ import { ChatView } from '@/components/ChatView';
 import { ChatList } from '@/components/ChatList';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft, MoreVertical, MessageCircle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { LoginArea } from '@/components/auth/LoginArea';
-import { Card, CardContent } from '@/components/ui/card';
 import { RelaySelector } from '@/components/RelaySelector';
 import { useEffect } from 'react';
 

@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat, useChatMessageDecryption, type ChatMessage } from '@/hooks/useChat';
 import { useAuthor } from '@/hooks/useAuthor';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useTruncateNostrId } from '@/hooks/useTruncateNostrId';
 import { genUserName } from '@/lib/genUserName';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RelaySelector } from '@/components/RelaySelector';
 import { Send, Lock, Loader2 } from 'lucide-react';
@@ -107,7 +105,6 @@ interface ChatViewProps {
 }
 
 export function ChatView({ contactPubkey }: ChatViewProps) {
-  const { user } = useCurrentUser();
   const author = useAuthor(contactPubkey);
   const { messages, isLoading, sendMessage, isAuthenticated } = useChat(contactPubkey);
   const [inputMessage, setInputMessage] = useState('');

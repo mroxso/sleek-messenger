@@ -1,4 +1,4 @@
-import { MessageCircle, User } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';

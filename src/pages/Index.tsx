@@ -1,7 +1,6 @@
 import { useSeoMeta } from '@unhead/react';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { MessageCircle, MoreVertical } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MessageCircle } from 'lucide-react';
 import { LoginArea } from '@/components/auth/LoginArea';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { ChatList } from '@/components/ChatList';

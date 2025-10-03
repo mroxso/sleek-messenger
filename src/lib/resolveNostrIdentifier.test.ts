@@ -34,10 +34,11 @@ describe('resolveNostrIdentifier', () => {
     const nip05 = 'jack@example.com';
     
     // Mock the fetch response
-    (fetch as any).mockResolvedValueOnce({
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ names: { jack: hexKey } })
-    });
+    } as Response);
     
     const result = await resolveNostrIdentifier(nip05);
     

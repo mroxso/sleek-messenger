@@ -109,7 +109,6 @@ interface ChatListProps {
 
 export function ChatList({ activeChatPubkey, className }: ChatListProps) {
   const { nostr } = useNostr();
-  const navigate = useNavigate();
   const { user } = useCurrentUser();
 
   const { data: recentContacts, isLoading } = useQuery({

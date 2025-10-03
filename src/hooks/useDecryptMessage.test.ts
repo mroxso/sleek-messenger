@@ -91,7 +91,7 @@ describe('useDecryptMessage', () => {
         },
       },
       users: [],
-    } as any);
+    } as unknown as ReturnType<typeof useCurrentUser>);
 
     const { result } = renderHook(
       () => useDecryptMessage(mockEncryptedEvent),

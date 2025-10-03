@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCurrentUser } from './useCurrentUser';
 import type { NostrEvent } from '@nostrify/nostrify';
+import type { NUser } from '@nostrify/react/login';
 
 export function useDecryptMessage(event: NostrEvent | undefined, recipientPubkey?: string) {
   const { user } = useCurrentUser();
@@ -32,7 +33,7 @@ export function useDecryptMessage(event: NostrEvent | undefined, recipientPubkey
 
 async function decryptNIP04Message(
   event: NostrEvent, 
-  user: any, 
+  user: NUser, 
   recipientPubkey?: string
 ): Promise<string> {
   try {
@@ -87,7 +88,7 @@ async function decryptNIP04Message(
   }
 }
 
-async function decryptNIP17GiftWrap(event: NostrEvent, user: any): Promise<string> {
+async function decryptNIP17GiftWrap(event: NostrEvent, user: NUser): Promise<string> {
   try {
     // NIP-17 gift wraps require decrypting with our own private key
     // The gift wrap is encrypted to us, and contains a seal inside

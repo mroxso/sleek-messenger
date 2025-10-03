@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, MessageSquarePlus } from 'lucide-react';
 import { useNostr } from '@nostrify/react';
+import type { NostrFilter } from '@nostrify/nostrify';
 import { resolveNostrIdentifier } from '@/lib/resolveNostrIdentifier';
 
 export function NewChatDialog() {
@@ -35,7 +36,7 @@ export function NewChatDialog() {
 
     try {
       // Use the utility function to resolve the identifier
-      const queryWrapper = async (filter: any) => {
+      const queryWrapper = async (filter: NostrFilter) => {
         const signal = AbortSignal.timeout(3000);
         return await nostr.query([filter], { signal });
       };

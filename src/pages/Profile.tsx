@@ -48,7 +48,7 @@ export default function Profile() {
       setCopiedNpub(true);
       toast({ title: 'Copied to clipboard!' });
       setTimeout(() => setCopiedNpub(false), 2000);
-    } catch (error) {
+    } catch {
       toast({
         title: 'Failed to copy',
         description: 'Please try again',
