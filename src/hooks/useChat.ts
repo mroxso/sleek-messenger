@@ -30,14 +30,14 @@ export function useChat(contactPubkey: string) {
       const events = await nostr.query([
         // Messages sent by me to the contact
         { 
-          kinds: [4, 1059], 
+          kinds: [4, 1059, 6], // Include kind 6 for reposts
           authors: [user.pubkey], 
           '#p': [contactPubkey], 
           limit: 100 
         },
         // Messages sent by the contact to me
         { 
-          kinds: [4, 1059], 
+          kinds: [4, 1059, 6], // Include kind 6 for reposts
           authors: [contactPubkey], 
           '#p': [user.pubkey], 
           limit: 100 

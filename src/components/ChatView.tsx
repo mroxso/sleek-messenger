@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat, useChatMessageDecryption, type ChatMessage } from '@/hooks/useChat';
 import { useAuthor } from '@/hooks/useAuthor';
-import { useTruncateNostrId } from '@/hooks/useTruncateNostrId';
 import { genUserName } from '@/lib/genUserName';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RelaySelector } from '@/components/RelaySelector';
+import { MessageContent } from '@/components/MessageContent';
 import { Send, Lock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -20,12 +20,9 @@ interface MessageBubbleProps {
 
 function MessageBubble({ message, contactPubkey, contactDisplayName, contactPicture }: MessageBubbleProps) {
   const { decryptedContent, isDecrypting } = useChatMessageDecryption(message, contactPubkey);
-  const { truncateNostrId } = useTruncateNostrId();
 
-  // Process the decrypted content to truncate any Nostr identifiers
-  const processedContent = decryptedContent ? 
-    decryptedContent.replace(/(nostr:[a-z]+1[023456789acdefghjklmnpqrstuvwxyz]+)/g, (match) => truncateNostrId(match)) : 
-    decryptedContent;
+  // For kind 6 reposts, use the content directly (it's JSON)
+  const displayContent = message.event?.kind === 6 ? message.content : (decryptedContent || message.content);
 
   return (
     <div className={cn(
@@ -44,7 +41,7 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
 
       {/* Message content */}
       <div className={cn(
-        "rounded-2xl px-4 py-2 break-words break-all overflow-hidden",
+        "rounded-2xl px-4 py-2 break-words overflow-hidden",
         message.isFromMe 
           ? "bg-primary text-primary-foreground rounded-br-md"
           : "bg-muted rounded-bl-md"
@@ -58,13 +55,13 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
           )}
         </div>
         
-        <p className="text-sm overflow-wrap-anywhere hyphens-auto">
+        <div className="text-sm overflow-wrap-anywhere hyphens-auto">
           {isDecrypting ? (
             <span className="animate-pulse opacity-70">Decrypting...</span>
           ) : (
-            processedContent || 'Failed to decrypt message'
+            <MessageContent content={displayContent || 'Failed to decrypt message'} />
           )}
-        </p>
+        </div>
 
         <p className={cn(
           "text-xs opacity-70 mt-1",

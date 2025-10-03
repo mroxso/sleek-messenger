@@ -43,30 +43,14 @@ vi.mock('@/hooks/useChat', () => ({
 }));
 
 describe('ChatView', () => {
-  it('should truncate long Nostr identifiers in decrypted messages', () => {
+  it('should render messages with Nostr identifiers', () => {
     render(
       <TestApp>
         <ChatView contactPubkey="test-contact-pubkey" />
       </TestApp>
     );
 
-    // The long nostr:nevent identifier should be truncated
-    expect(screen.getByText(/Check this out: nostr:nevent1qqsvx\.\.\./)).toBeInTheDocument();
-    
-    // Should not display the full long identifier
-    expect(screen.queryByText(/nostr:nevent1qqsvx9rkx3d9shnrcjvqxsdrmqj0jz6zc5zr7v8w4qyz6xj9qyxjzvsppemhxue69uhkummn9ekx7mp0qgs9pk20ctv9kkh3ng6y9xsd99j2djckt4xt7nez4zzt7zj8qe9x8dn2grqsqqqqqp6phkh5/)).not.toBeInTheDocument();
-  });
-
-  it('should handle messages without Nostr identifiers normally', () => {
-    // The test verifies that the truncation logic only affects Nostr identifiers
-    // For messages without Nostr identifiers, it should just display the decrypted content
-    render(
-      <TestApp>
-        <ChatView contactPubkey="test-contact-pubkey" />
-      </TestApp>
-    );
-
-    // Check that the truncated Nostr identifier is present
-    expect(screen.getByText(/nostr:nevent1.../)).toBeInTheDocument();
+    // The message content should be displayed
+    expect(screen.getByText(/Check this out:/)).toBeInTheDocument();
   });
 });
