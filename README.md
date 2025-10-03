@@ -1,238 +1,203 @@
-# MKStack
+# Sleek Messenger
 
-**The Complete Framework for Building Nostr Clients with AI**
+**Private, Encrypted Messaging on Nostr**
 
-MKStack is an AI-powered framework for building Nostr applications with React 18.x, TailwindCSS 3.x, Vite, shadcn/ui, and Nostrify. Build powerful Nostr applications with AI-first development - from social feeds to private messaging, MKStack provides everything you need to create decentralized apps on the Nostr protocol.
+Sleek Messenger is a modern, privacy-focused messaging application built on the Nostr protocol. Have secure, encrypted 1-on-1 conversations with anyone on the decentralized Nostr network.
+
+## 🔐 Key Features
+
+- **🔒 End-to-End Encryption**: Private conversations using NIP-44 encryption
+- **👤 1-on-1 Messaging**: Direct, secure communication with Nostr users
+- **🌐 Decentralized**: No central server - messages flow through Nostr relays
+- **🎨 Beautiful UI**: Clean, modern interface with light/dark theme support
+- **⚡ Fast & Responsive**: Built with React 18.x and Vite for instant interactions
+- **📱 Mobile-Friendly**: Responsive design that works on all devices
 
 ## 🚀 Quick Start
 
-Build your Nostr app in 3 simple steps:
-
-### 1. Install & Create
+### Development
 ```bash
-npm install -g @getstacks/stacks
-stacks mkstack
+npm install
+npm run dev
 ```
 
-### 2. Build with AI
+### Build for Production
 ```bash
-stacks agent
-# Tell Dork AI what you want: "Build a group chat application"
+npm run build
 ```
 
-### 3. Deploy Instantly
+### Deploy
 ```bash
 npm run deploy
-# ✅ App deployed to NostrDeploy.com!
 ```
 
-## ✨ What Makes MKStack Special
+## 💬 How It Works
 
-- **🤖 AI-First Development**: Build complete Nostr apps with just one prompt using Dork AI agent
-- **⚡ 8 Minutes Average**: From idea to deployed application in minutes, not months
-- **🔗 50+ NIPs Supported**: Comprehensive Nostr protocol implementation
-- **🎨 Beautiful UI**: 48+ shadcn/ui components with light/dark theme support
-- **🔐 Built-in Security**: NIP-07 browser signing, NIP-44 encryption, event validation
-- **💰 Payments Ready**: Lightning zaps (NIP-57), Cashu wallets (NIP-60), Wallet Connect (NIP-47)
-- **📱 Production Ready**: TypeScript, testing, deployment, and responsive design included
+Sleek Messenger leverages the Nostr protocol to provide truly private messaging:
 
-## 🛠 Technology Stack
+1. **Connect**: Log in with your Nostr account using browser extensions (Alby, nos2x, etc.)
+2. **Find Contacts**: Connect with anyone on Nostr using their npub or profile
+3. **Chat Securely**: All messages are encrypted end-to-end with NIP-44
+4. **Stay Private**: Your conversations are yours - no central server can read them
 
-- **React 18.x**: Stable version with hooks, concurrent rendering, and improved performance
-- **TailwindCSS 3.x**: Utility-first CSS framework for styling
-- **Vite**: Fast build tool and development server
-- **shadcn/ui**: 48+ unstyled, accessible UI components built with Radix UI
-- **Nostrify**: Nostr protocol framework for Deno and web
-- **React Router**: Client-side routing with BrowserRouter
-- **TanStack Query**: Data fetching, caching, and state management
-- **TypeScript**: Type-safe JavaScript development
+## 🛠 Built With
 
-## 🎯 Real-World Examples
-
-### Built with One Prompt
-
-Each of these applications was created with just a single prompt to Dork AI:
-
-- **Group Chat Application**: `"Build me a group chat application"`
-  - [Live Demo](https://groupchat-74z9j26wq-mks-projects-1f1254c4.vercel.app/)
-
-- **Decentralized Goodreads**: `"Build a decentralized goodreads alternative. Use OpenLibrary API for book data."`
-  - [Live Demo](https://bookstr123-87phkwjcy-mks-projects-1f1254c4.vercel.app/)
-
-- **Chess Game**: `"Build a chess game with NIP 64"`
-  - [Live Demo](https://chess-l0d7ms7m3-mks-projects-1f1254c4.vercel.app/chess)
-
-### Production Apps
-
-Real Nostr applications built using MKStack:
-
-- **[Chorus](https://chorus.community/)**: Facebook-style groups on Nostr with built-in eCash wallet
-- **[Blobbi](https://www.blobbi.pet/)**: Digital pet companions that live forever on the decentralized web
-- **[Treasures](https://treasures.to/)**: Decentralized geocaching adventure powered by Nostr
-
-[Browse more apps made with MKStack →](https://nostrhub.io/apps/t/mkstack/)
-
-## 🔧 Core Features
-
-### Authentication & Users
-- `LoginArea` component with account switching
-- `useCurrentUser` hook for authentication state
-- `useAuthor` hook for fetching user profiles
-- NIP-07 browser signing support
-- Multi-account management
+- **React 18.x**: Modern UI framework with hooks and concurrent rendering
+- **TailwindCSS 3.x**: Utility-first CSS framework for beautiful styling
+- **Vite**: Lightning-fast build tool and development server
+- **shadcn/ui**: Polished, accessible UI components
+- **Nostrify**: Nostr protocol framework for web
+- **TanStack Query**: Smart data fetching and caching
+- **TypeScript**: Type-safe development
 
 ### Nostr Protocol Support
-- **Social Features**: User profiles (NIP-01), follow lists (NIP-02), reactions (NIP-25), reposts (NIP-18)
-- **Messaging**: Private DMs (NIP-17), public chat (NIP-28), group chat (NIP-29), encryption (NIP-44)
-- **Payments**: Lightning zaps (NIP-57), Cashu wallets (NIP-60), Nutzaps (NIP-61), Wallet Connect (NIP-47)
-- **Content**: Long-form articles (NIP-23), file metadata (NIP-94), live events (NIP-53), calendars (NIP-52)
 
-### Data Management
-- `useNostr` hook for querying and publishing
-- `useNostrPublish` hook with automatic client tagging
+- **NIP-01**: Basic event structure and relay communication
+- **NIP-02**: Contact lists and social graph
+- **NIP-04**: Legacy encrypted direct messages (deprecated)
+- **NIP-17**: Private direct messages (Gift Wraps)
+- **NIP-44**: Modern encryption for private messaging
+- **NIP-07**: Browser signer extensions (Alby, nos2x, etc.)
+- **NIP-19**: Nostr identifiers (npub, note, nevent, naddr)
+
+## 🔒 Privacy & Security
+
+- **End-to-End Encryption**: Messages encrypted with NIP-44 before leaving your device
+- **No Central Server**: Decentralized architecture - no single point of failure
+- **Your Keys, Your Data**: You control your identity and messages
+- **Browser Signing**: Secure authentication using NIP-07 browser extensions
+- **Open Source**: Transparent, auditable code
+
+## � Features
+
+### Messaging
+- **Encrypted 1-on-1 Chats**: Private conversations with NIP-44 encryption
+- **Chat History**: Persistent message storage across relays
+- **Read Receipts**: See when messages are delivered
+- **User Profiles**: View contact profiles with avatars and bios
+- **Real-time Updates**: Instant message delivery
+
+### User Experience
+- **Clean Interface**: Intuitive chat list and conversation views
+- **Dark/Light Theme**: Automatic theme switching based on preference
+- **Mobile Responsive**: Works seamlessly on desktop and mobile
+- **Fast & Smooth**: Optimized performance with React and Vite
+- **Account Management**: Easy login with Nostr browser extensions
+
+### Technical Features
+- Multi-relay support for reliability
+- Message encryption/decryption
 - Event validation and filtering
-- Infinite scroll with TanStack Query
-- Multi-relay support
+- Efficient data caching
+- Type-safe with TypeScript
 
-### UI Components
-- 48+ shadcn/ui components (buttons, forms, dialogs, etc.)
-- `NoteContent` component for rich text rendering
-- `EditProfileForm` for profile management
-- `RelaySelector` for relay switching
-- `CommentsSection` for threaded discussions
-- Light/dark theme system
+## 🚦 Getting Started
 
-### Media & Files
-- `useUploadFile` hook with Blossom server integration
-- NIP-94 compatible file metadata
-- Image and video support
-- File attachment to events
+### Prerequisites
 
-### Advanced Features
-- NIP-19 identifier routing (`npub1`, `note1`, `nevent1`, `naddr1`)
-- Cryptographic operations (encryption/decryption)
-- Lightning payments and zaps
-- Real-time event subscriptions
-- Responsive design with mobile support
+- Node.js 18+ installed
+- A Nostr account and browser extension (recommended: [Alby](https://getalby.com/) or [nos2x](https://github.com/fiatjaf/nos2x))
 
-## 🤖 AI Development with Dork
+### Installation
 
-MKStack includes Dork, a built-in AI agent that understands your codebase and Nostr protocols:
-
-### Supported AI Providers
-
-Configure your AI provider with `stacks configure`:
-
-- **OpenRouter** ([openrouter.ai](https://openrouter.ai/)): Enter your API key from settings
-- **Routstr** ([routstr.com](https://www.routstr.com/)): Use Cashu tokens for payment
-- **PayPerQ** ([ppq.ai](https://ppq.ai/)): OpenAI-compatible API
-
-### How Dork Works
-
-- **Context-Aware**: Understands your entire codebase and project structure
-- **Nostr Expert**: Built-in knowledge of 50+ NIPs and best practices
-- **Instant Implementation**: Makes changes directly to your code following React/TypeScript best practices
-
-Example prompts:
 ```bash
-"Add user profiles with avatars and bio"
-"Implement NIP-17 private messaging"
-"Add a dark mode toggle"
-"Create a marketplace with NIP-15"
+# Clone the repository
+git clone https://github.com/mroxso/sleek-messenger.git
+cd sleek-messenger
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
+
+### Usage
+
+1. **Open the app** at `http://localhost:5173`
+2. **Log in** with your Nostr browser extension
+3. **Start chatting** - select a contact or start a new conversation
+4. **Send encrypted messages** - all communications are automatically encrypted
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── components/           # UI components
-│   ├── ui/              # shadcn/ui components (48+ available)
-│   ├── auth/            # Authentication components
-│   └── comments/        # Comment system components
+│   ├── ui/              # shadcn/ui components
+│   ├── auth/            # Login and authentication
+│   ├── ChatList.tsx     # Chat list sidebar
+│   ├── ChatView.tsx     # Message conversation view
+│   └── NewChatDialog.tsx # Start new conversations
 ├── hooks/               # Custom React hooks
-│   ├── useNostr         # Core Nostr integration
-│   ├── useAuthor        # User profile data
-│   ├── useCurrentUser   # Authentication state
-│   ├── useNostrPublish  # Event publishing
-│   ├── useUploadFile    # File uploads
-│   └── useZaps          # Lightning payments
+│   ├── useChat.ts       # Chat management
+│   ├── useDecryptMessage.ts # Message decryption
+│   ├── useCurrentUser.ts # Authentication state
+│   └── useAuthor.ts     # User profile data
 ├── pages/               # Page components
+│   ├── ChatPage.tsx     # Main messaging interface
+│   └── Profile.tsx      # User profile view
 ├── lib/                 # Utility functions
-├── contexts/            # React context providers
-└── test/                # Testing utilities
+└── contexts/            # React context providers
 ```
 
-## 🎨 UI Components
+## 🔧 Development
 
-MKStack includes 48+ shadcn/ui components:
-
-**Layout**: Card, Separator, Sheet, Sidebar, ScrollArea, Resizable
-**Navigation**: Breadcrumb, NavigationMenu, Menubar, Tabs, Pagination
-**Forms**: Button, Input, Textarea, Select, Checkbox, RadioGroup, Switch, Slider
-**Feedback**: Alert, AlertDialog, Toast, Progress, Skeleton
-**Overlay**: Dialog, Popover, HoverCard, Tooltip, ContextMenu, DropdownMenu
-**Data Display**: Table, Avatar, Badge, Calendar, Chart, Carousel
-**And many more...
-
-## 🔐 Security & Best Practices
-
-- **Never use `any` type**: Always use proper TypeScript types
-- **Event validation**: Filter events through validator functions for custom kinds
-- **Efficient queries**: Minimize separate queries to avoid rate limiting
-- **Proper error handling**: Graceful handling of invalid NIP-19 identifiers
-- **Secure authentication**: Use signer interface, never request private keys directly
-
-## 📱 Responsive Design
-
-- Mobile-first approach with Tailwind breakpoints
-- `useIsMobile` hook for responsive behavior
-- Touch-friendly interactions
-- Optimized for all screen sizes
-
-## 🧪 Testing
-
-- Vitest with jsdom environment
-- React Testing Library with jest-dom matchers
-- `TestApp` component provides all necessary context providers
-- Mocked browser APIs (matchMedia, scrollTo, IntersectionObserver, ResizeObserver)
-
-## 🚀 Deployment
-
-Built-in deployment to NostrDeploy.com:
+### Available Scripts
 
 ```bash
-npm run deploy
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run test     # Run test suite
+npm run deploy   # Deploy to production
 ```
 
-Your app goes live instantly with:
-- Automatic builds
-- CDN distribution
-- HTTPS support
-- Custom domains available
+### Architecture
 
-## 📚 Documentation
+Sleek Messenger uses a modern React architecture:
 
-For detailed documentation on building Nostr applications with MKStack:
+- **React 18.x**: Leveraging concurrent rendering and hooks
+- **TypeScript**: Full type safety across the codebase
+- **TanStack Query**: Efficient data fetching and caching
+- **Nostrify**: Clean abstraction over Nostr protocol
+- **shadcn/ui**: Beautiful, accessible components
 
-- [Tutorial](https://soapbox.pub/blog/mkstack-tutorial)
-- [Nostr Protocol Documentation](https://nostr.com)
-- [shadcn/ui Components](https://ui.shadcn.com)
+### Key Hooks
 
-## 🤝 Contributing
+- `useChat`: Manage conversations and message history
+- `useDecryptMessage`: Decrypt incoming encrypted messages
+- `useCurrentUser`: Access logged-in user state
+- `useAuthor`: Fetch user profile information
+- `useNostr`: Query and publish Nostr events
 
-MKStack is open source and welcomes contributions. The framework is designed to be:
+## � Contributing
 
-- **Extensible**: Easy to add new NIPs and features
-- **Maintainable**: Clean architecture with TypeScript
-- **Testable**: Comprehensive testing setup included
-- **Documented**: Clear patterns and examples
+We welcome contributions! Whether it's:
+
+- Bug fixes
+- Feature suggestions
+- UI improvements
+- Documentation updates
+- Testing
+
+Please feel free to open issues or submit pull requests.
 
 ## 📄 License
 
-Open source - build amazing Nostr applications and help grow the decentralized web!
+Open source under the MIT License.
+
+## � Acknowledgments
+
+- Built with [MKStack](https://soapbox.pub/mkstack)
+- Powered by the [Nostr protocol](https://nostr.com)
+- UI components from [shadcn/ui](https://ui.shadcn.com)
+
+## 🔗 Links
+
+- [Nostr Protocol](https://nostr.com)
+- [NIP-44 Specification](https://github.com/nostr-protocol/nips/blob/master/44.md)
+- [NIP-17 Specification](https://github.com/nostr-protocol/nips/blob/master/17.md)
 
 ---
 
-**"Vibed with MKStack"** - [Learn more about MKStack](https://soapbox.pub/mkstack)
-
-*Build your Nostr app in minutes, not months. Start with AI, deploy instantly.*
+**Secure messaging for the decentralized web** 🔒
