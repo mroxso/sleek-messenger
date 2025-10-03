@@ -21,15 +21,47 @@ import { useEffect } from 'react';
 import { nip19 } from 'nostr-tools';
 
 const ChatPage = () => {
-  const { pubkey } = useParams<{ pubkey: string }>();
+  const { pubkey: pubkeyParam } = useParams<{ pubkey: string }>();
   const navigate = useNavigate();
   const { user } = useCurrentUser();
-  const author = useAuthor(pubkey || '');
   const isMobile = useIsMobile();
   
+  // Decode NIP-19 identifier if needed (support both hex pubkey and npub)
+  let pubkey = '';
+  let npub = '';
+  let isInvalid = false;
+  
+  if (pubkeyParam) {
+    if (pubkeyParam.startsWith('npub1')) {
+      // Decode npub to hex pubkey
+      try {
+        const decoded = nip19.decode(pubkeyParam);
+        if (decoded.type === 'npub') {
+          pubkey = decoded.data;
+          npub = pubkeyParam;
+        } else {
+          // Invalid identifier type
+          isInvalid = true;
+        }
+      } catch {
+        // Invalid npub format
+        isInvalid = true;
+      }
+    } else {
+      // Assume it's a hex pubkey
+      pubkey = pubkeyParam;
+      try {
+        npub = nip19.npubEncode(pubkey);
+      } catch {
+        // Invalid hex pubkey
+        isInvalid = true;
+      }
+    }
+  }
+  
+  const author = useAuthor(pubkey);
   const metadata = author.data?.metadata;
-  const displayName = metadata?.display_name || metadata?.name || genUserName(pubkey || '');
-  const npub = pubkey ? nip19.npubEncode(pubkey) : '';
+  const displayName = metadata?.display_name || metadata?.name || genUserName(pubkey);
 
   const handleViewProfile = () => {
     if (npub) {
@@ -42,15 +74,15 @@ const ChatPage = () => {
     description: `Private encrypted chat with ${displayName} on Nostr`,
   });
 
-  // Redirect if no pubkey provided
+  // Redirect if invalid or no pubkey provided
   useEffect(() => {
-    if (!pubkey) {
+    if (!pubkeyParam || isInvalid) {
       navigate('/', { replace: true });
     }
-  }, [pubkey, navigate]);
+  }, [pubkeyParam, isInvalid, navigate]);
 
-  // Don't render anything if no pubkey
-  if (!pubkey) {
+  // Don't render anything if no pubkey or invalid
+  if (!pubkey || isInvalid) {
     return null;
   }
 
