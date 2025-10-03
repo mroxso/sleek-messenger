@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MessageCircle, Calendar, Hash, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { NostrEvent } from '@nostrify/nostrify';
+import { nip19 } from 'nostr-tools';
 
 interface AddressableEventProps {
   kind: number;
@@ -170,7 +171,7 @@ export function AddressableEvent({ kind, pubkey, identifier, relays }: Addressab
             <div className="flex items-center space-x-3">
               <Avatar 
                 className="h-12 w-12 cursor-pointer"
-                onClick={() => navigate(`/profile/${pubkey}`)}
+                onClick={() => navigate(`/${nip19.npubEncode(pubkey)}`)}
               >
                 <AvatarImage src={metadata?.picture} alt={displayName} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
@@ -181,7 +182,7 @@ export function AddressableEvent({ kind, pubkey, identifier, relays }: Addressab
               <div>
                 <h3 
                   className="font-semibold text-foreground cursor-pointer hover:underline"
-                  onClick={() => navigate(`/profile/${pubkey}`)}
+                  onClick={() => navigate(`/${nip19.npubEncode(pubkey)}`)}
                 >
                   {displayName}
                 </h3>
