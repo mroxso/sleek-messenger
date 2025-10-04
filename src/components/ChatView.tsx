@@ -50,7 +50,11 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
         )}>
           <div className="flex items-center gap-2 mb-1">
             {message.isEncrypted && (
-              <Lock className="h-3 w-3 opacity-70" />
+              <Lock className={cn(
+                "h-3 w-3 opacity-70",
+                message.encryptionType === 'nip17' && "text-green-500",
+                message.encryptionType === 'nip04' && "text-orange-500"
+              )} />
             )}
             {isDecrypting && (
               <Loader2 className="h-3 w-3 animate-spin opacity-70" />
@@ -216,7 +220,7 @@ export function ChatView({ contactPubkey }: ChatViewProps) {
                 Start chatting with {displayName}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Your messages will be encrypted end-to-end using Nostr's NIP-04 protocol
+                Your messages will be encrypted end-to-end using Nostr's NIP-17 protocol
               </p>
             </div>
 

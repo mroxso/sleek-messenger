@@ -27,8 +27,9 @@ function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItem
   // Decrypt the last message if it's encrypted
   const { data: decryptedMessage, isLoading: isDecrypting } = useDecryptMessage(lastMessage, pubkey);
 
-  // Check if this is an encrypted message
+  // Check if this is an encrypted message and determine encryption type
   const isEncrypted = lastMessage?.kind === 4 || lastMessage?.kind === 1059;
+  const encryptionType = lastMessage?.kind === 1059 ? 'nip17' : lastMessage?.kind === 4 ? 'nip04' : undefined;
 
   const handleClick = () => {
     navigate(`/chat/${pubkey}`);
@@ -68,7 +69,12 @@ function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItem
         </div>
         <div className="flex items-center space-x-1 mt-1">
           {isEncrypted && (
-            <Lock className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            <Lock className={cn(
+              "h-3 w-3 flex-shrink-0",
+              encryptionType === 'nip17' && "text-green-500",
+              encryptionType === 'nip04' && "text-orange-500",
+              !encryptionType && "text-muted-foreground"
+            )} />
           )}
           <p className="text-sm text-muted-foreground truncate">
             {isDecrypting ? (

@@ -10,6 +10,7 @@ export interface ChatMessage {
   timestamp: number;
   isFromMe: boolean;
   isEncrypted: boolean;
+  encryptionType?: 'nip04' | 'nip17'; // Track which encryption standard is used
   event: NostrEvent;
   decryptedContent?: string;
 }
@@ -54,6 +55,7 @@ export function useChat(contactPubkey: string) {
         timestamp: event.created_at,
         isFromMe: event.pubkey === user.pubkey,
         isEncrypted: event.kind === 4 || event.kind === 1059,
+        encryptionType: event.kind === 1059 ? 'nip17' : event.kind === 4 ? 'nip04' : undefined,
         event
       }));
 
@@ -71,36 +73,78 @@ export function useChat(contactPubkey: string) {
         throw new Error('User not authenticated');
       }
 
-      let messageContent = content;
-      let kind = 1; // Default to public note
-
-      if (!isPlainText) {
-        // Encrypt the message using NIP-04
-        if (!user.signer.nip04) {
-          throw new Error('Signer does not support NIP-04 encryption');
-        }
-        
-        try {
-          messageContent = await user.signer.nip04.encrypt(contactPubkey, content);
-          kind = 4; // Encrypted direct message
-        } catch (error) {
-          console.error('Failed to encrypt message:', error);
-          throw new Error('Failed to encrypt message');
-        }
+      if (isPlainText) {
+        // Send as public note
+        const event = await user.signer.signEvent({
+          kind: 1,
+          content,
+          tags: [['p', contactPubkey]],
+          created_at: Math.floor(Date.now() / 1000),
+        });
+        await nostr.event(event);
+        return event;
       }
 
-      // Create the event
-      const event = await user.signer.signEvent({
-        kind,
-        content: messageContent,
-        tags: [['p', contactPubkey]],
-        created_at: Math.floor(Date.now() / 1000),
-      });
+      // Use NIP-17 for encrypted messages by default
+      if (!user.signer.nip44) {
+        throw new Error('Signer does not support NIP-44 encryption (required for NIP-17)');
+      }
 
-      // Publish the event
-      await nostr.event(event);
+      try {
+        // Step 1: Create the unsigned kind 14 message
+        const kind14Message = {
+          kind: 14,
+          content,
+          tags: [['p', contactPubkey]],
+          created_at: Math.floor(Date.now() / 1000),
+          pubkey: user.pubkey,
+        };
 
-      return event;
+        // Step 2: Encrypt the kind 14 message and create a kind 13 seal (signed by sender)
+        const encryptedContent = await user.signer.nip44.encrypt(contactPubkey, JSON.stringify(kind14Message));
+        const seal = await user.signer.signEvent({
+          kind: 13,
+          content: encryptedContent,
+          tags: [],
+          created_at: Math.floor(Date.now() / 1000) - Math.floor(Math.random() * 172800), // Randomize up to 2 days in the past
+        });
+
+        // Step 3: Create gift wraps for both receiver and sender
+        const { generateSecretKey, finalizeEvent } = await import('nostr-tools');
+        
+        // Generate a random keypair for the gift wrap
+        const randomKey = generateSecretKey();
+
+        // Encrypt the seal for the receiver
+        const giftWrapContentForReceiver = await user.signer.nip44.encrypt(contactPubkey, JSON.stringify(seal));
+        const giftWrapForReceiver = finalizeEvent({
+          kind: 1059,
+          content: giftWrapContentForReceiver,
+          tags: [['p', contactPubkey]],
+          created_at: Math.floor(Date.now() / 1000) - Math.floor(Math.random() * 172800), // Randomize up to 2 days in the past
+        }, randomKey);
+
+        // Encrypt the seal for the sender (ourselves) so we can see our own messages
+        const giftWrapContentForSender = await user.signer.nip44.encrypt(user.pubkey, JSON.stringify(seal));
+        const giftWrapForSender = finalizeEvent({
+          kind: 1059,
+          content: giftWrapContentForSender,
+          tags: [['p', user.pubkey]],
+          created_at: Math.floor(Date.now() / 1000) - Math.floor(Math.random() * 172800), // Randomize up to 2 days in the past
+        }, randomKey);
+
+        // Step 4: Publish both gift wraps
+        await Promise.all([
+          nostr.event(giftWrapForReceiver),
+          nostr.event(giftWrapForSender),
+        ]);
+
+        // Return the gift wrap sent to the receiver as the "event"
+        return giftWrapForReceiver;
+      } catch (error) {
+        console.error('Failed to send NIP-17 message:', error);
+        throw new Error('Failed to send encrypted message');
+      }
     },
     onSuccess: () => {
       // Refetch messages after sending
