@@ -13,7 +13,8 @@ import {
   Mail,
   Zap,
   Copy,
-  Check
+  Check,
+  Info
 } from 'lucide-react';
 import { genUserName } from '@/lib/genUserName';
 import { useLoginActions } from '@/hooks/useLoginActions';
@@ -178,6 +179,15 @@ export default function Profile() {
             >
               <Settings className="h-4 w-4 mr-3" />
               Settings
+            </Button>
+
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/about')}
+            >
+              <Info className="h-4 w-4 mr-3" />
+              About Sleek
             </Button>
 
             <Button

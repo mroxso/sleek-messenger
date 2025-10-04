@@ -16,20 +16,63 @@ const Index = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <MessageCircle className="h-16 w-16 text-primary mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              Welcome to Sleek
-            </h1>
-            <p className="text-muted-foreground">
-              Connect with friends on the Nostr network
-            </p>
+      <>
+        <div className="min-h-screen bg-background flex items-center justify-center p-4 pb-24">
+          <div className="w-full max-w-2xl">
+            <div className="text-center mb-8">
+              <MessageCircle className="h-20 w-20 text-primary mx-auto mb-6" />
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+                Welcome to Sleek
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl mx-auto">
+                Private, encrypted messaging built on the decentralized Nostr protocol. 
+                Own your conversations, own your data.
+              </p>
+              
+              {/* Key Features */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
+                <div className="p-4 rounded-lg border border-border bg-card">
+                  <h3 className="font-semibold text-foreground mb-2 text-sm md:text-base">
+                    🔒 End-to-End Encrypted
+                  </h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Your messages are completely private and secure
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg border border-border bg-card">
+                  <h3 className="font-semibold text-foreground mb-2 text-sm md:text-base">
+                    🌐 Truly Decentralized
+                  </h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    No central authority, no single point of failure
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg border border-border bg-card">
+                  <h3 className="font-semibold text-foreground mb-2 text-sm md:text-base">
+                    🔑 You Own Your Identity
+                  </h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Your keys, your account, your control
+                  </p>
+                </div>
+              </div>
+
+              {/* Login Area */}
+              <div className="max-w-md mx-auto">
+                <LoginArea className="w-full" />
+              </div>
+              
+              <p className="text-sm text-muted-foreground mt-6">
+                New to Nostr?{' '}
+                <a target='_blank' href="https://nostr.how" className="text-primary hover:underline">
+                  Learn more about the protocol
+                </a>
+              </p>
+            </div>
           </div>
-          <LoginArea className="w-full" />
         </div>
-      </div>
+        <BottomNavigation />
+      </>
     );
   }
 
