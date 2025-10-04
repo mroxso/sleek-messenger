@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RelaySelector } from '@/components/RelaySelector';
 import { MessageContent } from '@/components/MessageContent';
+import { ReactionButton } from '@/components/ReactionButton';
 import { Send, Lock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,38 +41,56 @@ function MessageBubble({ message, contactPubkey, contactDisplayName, contactPict
       )}
 
       {/* Message content */}
-      <div className={cn(
-        "rounded-2xl px-4 py-2 break-words overflow-hidden",
-        message.isFromMe 
-          ? "bg-primary text-primary-foreground rounded-br-md"
-          : "bg-muted rounded-bl-md"
-      )}>
-        <div className="flex items-center gap-2 mb-1">
-          {message.isEncrypted && (
-            <Lock className="h-3 w-3 opacity-70" />
-          )}
-          {isDecrypting && (
-            <Loader2 className="h-3 w-3 animate-spin opacity-70" />
-          )}
-        </div>
-        
-        <div className="text-sm overflow-wrap-anywhere hyphens-auto">
-          {isDecrypting ? (
-            <span className="animate-pulse opacity-70">Decrypting...</span>
-          ) : (
-            <MessageContent content={displayContent || 'Failed to decrypt message'} />
-          )}
+      <div className="flex flex-col gap-1">
+        <div className={cn(
+          "rounded-2xl px-4 py-2 break-words overflow-hidden",
+          message.isFromMe 
+            ? "bg-primary text-primary-foreground rounded-br-md"
+            : "bg-muted rounded-bl-md"
+        )}>
+          <div className="flex items-center gap-2 mb-1">
+            {message.isEncrypted && (
+              <Lock className="h-3 w-3 opacity-70" />
+            )}
+            {isDecrypting && (
+              <Loader2 className="h-3 w-3 animate-spin opacity-70" />
+            )}
+          </div>
+          
+          <div className="text-sm overflow-wrap-anywhere hyphens-auto">
+            {isDecrypting ? (
+              <span className="animate-pulse opacity-70">Decrypting...</span>
+            ) : (
+              <MessageContent content={displayContent || 'Failed to decrypt message'} />
+            )}
+          </div>
+
+          <p className={cn(
+            "text-xs opacity-70 mt-1",
+            message.isFromMe ? "text-right" : "text-left"
+          )}>
+            {new Date(message.timestamp * 1000).toLocaleTimeString([], { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })}
+          </p>
         </div>
 
-        <p className={cn(
-          "text-xs opacity-70 mt-1",
-          message.isFromMe ? "text-right" : "text-left"
-        )}>
-          {new Date(message.timestamp * 1000).toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })}
-        </p>
+        {/* Reaction button - only show if we have an event with an ID */}
+        {message.event && message.event.id && (
+          <div className={cn(
+            "flex",
+            message.isFromMe ? "justify-end" : "justify-start"
+          )}>
+            <ReactionButton
+              eventId={message.event.id}
+              eventPubkey={message.event.pubkey}
+              eventKind={message.event.kind}
+              size="sm"
+              variant="ghost"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

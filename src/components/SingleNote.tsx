@@ -3,11 +3,12 @@ import { useNostr } from '@nostrify/react';
 import { useAuthor } from '@/hooks/useAuthor';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { genUserName } from '@/lib/genUserName';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { NoteContent } from '@/components/NoteContent';
+import { ReactionButton } from '@/components/ReactionButton';
 import { MessageCircle, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { NostrEvent } from '@nostrify/nostrify';
@@ -145,6 +146,14 @@ export function SingleNote({ eventId }: SingleNoteProps) {
             <NoteContent event={event} className="text-base leading-relaxed" />
           </div>
         </CardContent>
+
+        <CardFooter className="pt-2 pb-4 border-t">
+          <ReactionButton
+            eventId={event.id}
+            eventPubkey={event.pubkey}
+            eventKind={event.kind}
+          />
+        </CardFooter>
       </Card>
     </div>
   );

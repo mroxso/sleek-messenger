@@ -3,11 +3,12 @@ import { useNostr } from '@nostrify/react';
 import { useAuthor } from '@/hooks/useAuthor';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { genUserName } from '@/lib/genUserName';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ReactionButton } from '@/components/ReactionButton';
 import { MessageCircle, Calendar, Hash, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { NostrEvent } from '@nostrify/nostrify';
@@ -267,6 +268,16 @@ export function AddressableEvent({ kind, pubkey, identifier, relays }: Addressab
             </code>
           </div>
         </CardContent>
+
+        <CardFooter className="pt-2 pb-4 border-t">
+          <ReactionButton
+            eventId={event.id}
+            eventPubkey={event.pubkey}
+            eventKind={event.kind}
+            dTag={identifier}
+            relayHint={relays?.[0]}
+          />
+        </CardFooter>
       </Card>
     </div>
   );
