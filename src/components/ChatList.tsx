@@ -135,7 +135,8 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
       // Extract unique contacts from the events
       const contacts = new Map<string, { pubkey: string; lastMessage?: NostrEvent; timestamp: number }>();
 
-      events.forEach(event => {
+      // Process events to find contacts
+      for (const event of events) {
         let contactPubkey: string | undefined;
 
         if (event.kind === 4) {
@@ -144,10 +145,23 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
             ? event.tags.find(tag => tag[0] === 'p')?.[1]
             : event.pubkey;
         } else if (event.kind === 1059) {
-          // NIP-17 gift wrap - the sender is the contact
-          // Note: For full NIP-17 support, we'd need to decrypt the gift wrap
-          // to get the actual message, but for now we can at least track the conversation
-          contactPubkey = event.pubkey !== user.pubkey ? event.pubkey : undefined;
+          // NIP-17 gift wrap - decrypt to find the actual sender
+          try {
+            if (user.signer.nip44) {
+              // Decrypt the gift wrap
+              const giftWrapContent = await user.signer.nip44.decrypt(event.pubkey, event.content);
+              const seal = JSON.parse(giftWrapContent);
+              
+              // The seal's pubkey is the actual sender
+              if (seal.pubkey && seal.pubkey !== user.pubkey) {
+                contactPubkey = seal.pubkey;
+              }
+            }
+          } catch (error) {
+            // If decryption fails, skip this message
+            console.debug('Failed to decrypt NIP-17 gift wrap in chat list:', error);
+            continue;
+          }
         }
 
         if (contactPubkey && contactPubkey !== user.pubkey) {
@@ -160,7 +174,7 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
             });
           }
         }
-      });
+      }
 
       return Array.from(contacts.values())
         .sort((a, b) => b.timestamp - a.timestamp)
