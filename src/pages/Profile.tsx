@@ -13,8 +13,7 @@ import {
   Mail,
   Zap,
   Copy,
-  Check,
-  Info
+  Check
 } from 'lucide-react';
 import { genUserName } from '@/lib/genUserName';
 import { useLoginActions } from '@/hooks/useLoginActions';
