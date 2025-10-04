@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat, useChatMessageDecryption, type ChatMessage } from '@/hooks/useChat';
 import { useAuthor } from '@/hooks/useAuthor';
+import { useSeenMessages } from '@/hooks/useSeenMessages';
 import { genUserName } from '@/lib/genUserName';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -123,6 +124,7 @@ interface ChatViewProps {
 export function ChatView({ contactPubkey }: ChatViewProps) {
   const author = useAuthor(contactPubkey);
   const { messages, isLoading, sendMessage, isAuthenticated } = useChat(contactPubkey);
+  const { markChatAsRead } = useSeenMessages();
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -133,6 +135,16 @@ export function ChatView({ contactPubkey }: ChatViewProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Mark chat as read when messages are loaded or updated
+  useEffect(() => {
+    if (messages.length > 0 && isAuthenticated) {
+      // Get the timestamp of the most recent message
+      const latestTimestamp = Math.max(...messages.map(m => m.timestamp));
+      // Mark the chat as read with the latest message timestamp
+      markChatAsRead.mutate({ contactPubkey, timestamp: latestTimestamp });
+    }
+  }, [messages, contactPubkey, isAuthenticated, markChatAsRead]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

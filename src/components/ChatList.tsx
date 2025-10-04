@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Lock, MessageCircle } from 'lucide-react';
 import { useAuthor } from '@/hooks/useAuthor';
+import { useSeenMessages } from '@/hooks/useSeenMessages';
 import { genUserName } from '@/lib/genUserName';
 import { useDecryptMessage } from '@/hooks/useDecryptMessage';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -16,9 +17,10 @@ interface ChatItemProps {
   lastMessage?: NostrEvent;
   timestamp?: number;
   isActive?: boolean;
+  unreadCount?: number;
 }
 
-function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItemProps) {
+function ChatItem({ pubkey, lastMessage, timestamp, isActive = false, unreadCount = 0 }: ChatItemProps) {
   const navigate = useNavigate();
   const author = useAuthor(pubkey);
   const metadata = author.data?.metadata;
@@ -29,6 +31,9 @@ function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItem
 
   // Check if this is an encrypted message
   const isEncrypted = lastMessage?.kind === 4 || lastMessage?.kind === 1059;
+  
+  // Check if there are unread messages
+  const hasUnread = unreadCount > 0;
 
   const handleClick = () => {
     navigate(`/chat/${pubkey}`);
@@ -42,35 +47,53 @@ function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItem
       )}
       onClick={handleClick}
     >
-      <Avatar className="h-12 w-12 flex-shrink-0">
-        <AvatarImage src={metadata?.picture} alt={displayName} />
-        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-          {displayName.slice(0, 2).toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
+      <div className="relative">
+        <Avatar className="h-12 w-12 flex-shrink-0">
+          <AvatarImage src={metadata?.picture} alt={displayName} />
+          <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+            {displayName.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        {hasUnread && (
+          <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+            <span className="text-[10px] font-bold text-primary-foreground">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          </div>
+        )}
+      </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between">
           <h3 className={cn(
-            "font-medium truncate pr-2",
+            "truncate pr-2",
+            hasUnread ? "font-bold text-foreground" : "font-medium",
             isActive ? "text-primary" : "text-foreground"
           )}>
             {displayName}
           </h3>
-          {timestamp && (
-            <span className="text-xs text-muted-foreground flex-shrink-0">
-              {new Date(timestamp * 1000).toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric'
-              })}
-            </span>
-          )}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {timestamp && (
+              <span className={cn(
+                "text-xs",
+                hasUnread ? "text-foreground font-semibold" : "text-muted-foreground"
+              )}>
+                {new Date(timestamp * 1000).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-1 mt-1">
           {isEncrypted && (
             <Lock className="h-3 w-3 text-muted-foreground flex-shrink-0" />
           )}
-          <p className="text-sm text-muted-foreground truncate">
+          <p className={cn(
+            "text-sm truncate",
+            hasUnread ? "text-foreground font-medium" : "text-muted-foreground"
+          )}>
             {isDecrypting ? (
               <span className="animate-pulse">Decrypting...</span>
             ) : (
@@ -110,6 +133,7 @@ interface ChatListProps {
 export function ChatList({ activeChatPubkey, className }: ChatListProps) {
   const { nostr } = useNostr();
   const { user } = useCurrentUser();
+  const { hasUnreadMessages } = useSeenMessages();
 
   const { data: recentContacts, isLoading } = useQuery({
     queryKey: ['recent-contacts'],
@@ -172,15 +196,22 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
   if (recentContacts && recentContacts.length > 0) {
     return (
       <div className={cn("divide-y divide-border/50", className)}>
-        {recentContacts.map((contact) => (
-          <ChatItem
-            key={contact.pubkey}
-            pubkey={contact.pubkey}
-            lastMessage={contact.lastMessage}
-            timestamp={contact.timestamp}
-            isActive={activeChatPubkey === contact.pubkey}
-          />
-        ))}
+        {recentContacts.map((contact) => {
+          const isUnread = contact.lastMessage 
+            ? hasUnreadMessages(contact.pubkey, contact.lastMessage.created_at)
+            : false;
+          
+          return (
+            <ChatItem
+              key={contact.pubkey}
+              pubkey={contact.pubkey}
+              lastMessage={contact.lastMessage}
+              timestamp={contact.timestamp}
+              isActive={activeChatPubkey === contact.pubkey}
+              unreadCount={isUnread ? 1 : 0}
+            />
+          );
+        })}
       </div>
     );
   }

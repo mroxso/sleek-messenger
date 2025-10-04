@@ -1,13 +1,76 @@
 import { useSeoMeta } from '@unhead/react';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { MessageCircle } from 'lucide-react';
+import { useSeenMessages } from '@/hooks/useSeenMessages';
+import { useToast } from '@/hooks/useToast';
+import { useQuery } from '@tanstack/react-query';
+import { useNostr } from '@nostrify/react';
+import { MessageCircle, MoreVertical, CheckCheck } from 'lucide-react';
 import { LoginArea } from '@/components/auth/LoginArea';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { ChatList } from '@/components/ChatList';
 import { NewChatDialog } from '@/components/NewChatDialog';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Index = () => {
   const { user } = useCurrentUser();
+  const { nostr } = useNostr();
+  const { markAllAsRead } = useSeenMessages();
+  const { toast } = useToast();
+
+  // Query to get all contact pubkeys for mark all as read
+  const { data: contactPubkeys = [] } = useQuery({
+    queryKey: ['all-contact-pubkeys'],
+    queryFn: async (c) => {
+      if (!user) return [];
+      const signal = AbortSignal.any([c.signal, AbortSignal.timeout(1500)]);
+
+      const events = await nostr.query([
+        { kinds: [4], authors: [user.pubkey], limit: 100 },
+        { kinds: [4], '#p': [user.pubkey], limit: 100 },
+        { kinds: [1059], '#p': [user.pubkey], limit: 100 },
+      ], { signal });
+
+      const contacts = new Set<string>();
+      events.forEach(event => {
+        if (event.kind === 4) {
+          const contactPubkey = event.pubkey === user.pubkey
+            ? event.tags.find(tag => tag[0] === 'p')?.[1]
+            : event.pubkey;
+          if (contactPubkey && contactPubkey !== user.pubkey) {
+            contacts.add(contactPubkey);
+          }
+        } else if (event.kind === 1059 && event.pubkey !== user.pubkey) {
+          contacts.add(event.pubkey);
+        }
+      });
+
+      return Array.from(contacts);
+    },
+    enabled: !!user,
+  });
+
+  const handleMarkAllAsRead = () => {
+    if (contactPubkeys.length === 0) {
+      toast({
+        description: 'No chats to mark as read',
+      });
+      return;
+    }
+
+    markAllAsRead.mutate(contactPubkeys, {
+      onSuccess: () => {
+        toast({
+          description: 'All chats marked as read',
+        });
+      },
+    });
+  };
 
   useSeoMeta({
     title: 'Chats - Sleek',
@@ -42,9 +105,22 @@ const Index = () => {
             <h1 className="text-xl font-semibold text-foreground">Chats</h1>
             <div className="flex items-center space-x-2">
               <NewChatDialog />
-              {/* <Button variant="ghost" size="icon" className="h-9 w-9">
-                <MoreVertical className="h-5 w-5" />
-              </Button> */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem 
+                    onClick={handleMarkAllAsRead}
+                    disabled={markAllAsRead.isPending}
+                  >
+                    <CheckCheck className="h-4 w-4 mr-2" />
+                    Mark All as Read
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

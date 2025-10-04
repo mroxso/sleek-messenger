@@ -3,14 +3,16 @@ import { useSeoMeta } from '@unhead/react';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAuthor } from '@/hooks/useAuthor';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useSeenMessages } from '@/hooks/useSeenMessages';
 import { genUserName } from '@/lib/genUserName';
 import { ChatView } from '@/components/ChatView';
 import { ChatList } from '@/components/ChatList';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft, MoreVertical, User } from 'lucide-react';
+import { ArrowLeft, MoreVertical, User, CheckCheck } from 'lucide-react';
 import { LoginArea } from '@/components/auth/LoginArea';
 import { RelaySelector } from '@/components/RelaySelector';
+import { useToast } from '@/hooks/useToast';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +32,8 @@ const ChatPage = () => {
   const navigate = useNavigate();
   const { user } = useCurrentUser();
   const isMobile = useIsMobile();
+  const { markChatAsRead } = useSeenMessages();
+  const { toast } = useToast();
   
   // Decode NIP-19 identifier if needed (support both hex pubkey and npub)
   let pubkey = '';
@@ -72,6 +76,19 @@ const ChatPage = () => {
     if (npub) {
       navigate(`/${npub}`);
     }
+  };
+
+  const handleMarkAsRead = () => {
+    markChatAsRead.mutate(
+      { contactPubkey: pubkey },
+      {
+        onSuccess: () => {
+          toast({
+            description: 'Chat marked as read',
+          });
+        },
+      }
+    );
   };
 
   useSeoMeta({
@@ -156,6 +173,10 @@ const ChatPage = () => {
                   <User className="h-4 w-4 mr-2" />
                   View Profile
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleMarkAsRead}>
+                  <CheckCheck className="h-4 w-4 mr-2" />
+                  Mark as Read
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -179,13 +200,29 @@ const ChatPage = () => {
             <div className="sticky top-0 z-10 bg-background border-b border-border p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-foreground">Chats</h2>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/')}
-                >
-                  Back
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      // Get all contact pubkeys and mark all as read
+                      // This will be handled by querying the chat list
+                      toast({
+                        description: 'Mark all feature coming soon',
+                      });
+                    }}
+                  >
+                    <CheckCheck className="h-4 w-4 mr-1" />
+                    Mark All
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/')}
+                  >
+                    Back
+                  </Button>
+                </div>
               </div>
             </div>
             
@@ -237,6 +274,10 @@ const ChatPage = () => {
                     <DropdownMenuItem onClick={handleViewProfile}>
                       <User className="h-4 w-4 mr-2" />
                       View Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleMarkAsRead}>
+                      <CheckCheck className="h-4 w-4 mr-2" />
+                      Mark as Read
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
