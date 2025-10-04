@@ -27,8 +27,9 @@ function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItem
   // Decrypt the last message if it's encrypted
   const { data: decryptedMessage, isLoading: isDecrypting } = useDecryptMessage(lastMessage, pubkey);
 
-  // Check if this is an encrypted message
+  // Check if this is an encrypted message and determine encryption type
   const isEncrypted = lastMessage?.kind === 4 || lastMessage?.kind === 1059;
+  const encryptionType = lastMessage?.kind === 1059 ? 'nip17' : lastMessage?.kind === 4 ? 'nip04' : undefined;
 
   const handleClick = () => {
     navigate(`/chat/${pubkey}`);
@@ -68,7 +69,12 @@ function ChatItem({ pubkey, lastMessage, timestamp, isActive = false }: ChatItem
         </div>
         <div className="flex items-center space-x-1 mt-1">
           {isEncrypted && (
-            <Lock className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            <Lock className={cn(
+              "h-3 w-3 flex-shrink-0",
+              encryptionType === 'nip17' && "text-green-500",
+              encryptionType === 'nip04' && "text-orange-500",
+              !encryptionType && "text-muted-foreground"
+            )} />
           )}
           <p className="text-sm text-muted-foreground truncate">
             {isDecrypting ? (
@@ -129,7 +135,8 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
       // Extract unique contacts from the events
       const contacts = new Map<string, { pubkey: string; lastMessage?: NostrEvent; timestamp: number }>();
 
-      events.forEach(event => {
+      // Process events to find contacts
+      for (const event of events) {
         let contactPubkey: string | undefined;
 
         if (event.kind === 4) {
@@ -138,10 +145,23 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
             ? event.tags.find(tag => tag[0] === 'p')?.[1]
             : event.pubkey;
         } else if (event.kind === 1059) {
-          // NIP-17 gift wrap - the sender is the contact
-          // Note: For full NIP-17 support, we'd need to decrypt the gift wrap
-          // to get the actual message, but for now we can at least track the conversation
-          contactPubkey = event.pubkey !== user.pubkey ? event.pubkey : undefined;
+          // NIP-17 gift wrap - decrypt to find the actual sender
+          try {
+            if (user.signer.nip44) {
+              // Decrypt the gift wrap
+              const giftWrapContent = await user.signer.nip44.decrypt(event.pubkey, event.content);
+              const seal = JSON.parse(giftWrapContent);
+              
+              // The seal's pubkey is the actual sender
+              if (seal.pubkey && seal.pubkey !== user.pubkey) {
+                contactPubkey = seal.pubkey;
+              }
+            }
+          } catch (error) {
+            // If decryption fails, skip this message
+            console.debug('Failed to decrypt NIP-17 gift wrap in chat list:', error);
+            continue;
+          }
         }
 
         if (contactPubkey && contactPubkey !== user.pubkey) {
@@ -154,7 +174,7 @@ export function ChatList({ activeChatPubkey, className }: ChatListProps) {
             });
           }
         }
-      });
+      }
 
       return Array.from(contacts.values())
         .sort((a, b) => b.timestamp - a.timestamp)
