@@ -61,10 +61,10 @@ export function MessageContent({ content, className }: MessageContentProps) {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:underline inline-flex items-center gap-1"
+            className="text-blue-400 hover:underline inline-flex items-center gap-1 break-all"
           >
-            {url}
-            <ExternalLink className="h-3 w-3" />
+            <span className="break-all">{url}</span>
+            <ExternalLink className="h-3 w-3 flex-shrink-0" />
           </a>
         );
       } else if (nostrPrefix && nostrData) {
@@ -141,7 +141,7 @@ function NostrReference({ identifier, fullMatch }: { identifier: string; fullMat
       return (
         <Link 
           to={`/${identifier}`}
-          className="text-blue-400 hover:underline"
+          className="text-blue-400 hover:underline inline-block max-w-full truncate"
           title={fullMatch}
         >
           {truncatedDisplay}
@@ -153,7 +153,7 @@ function NostrReference({ identifier, fullMatch }: { identifier: string; fullMat
       return (
         <Link 
           to={`/${identifier}`}
-          className="text-blue-400 hover:underline"
+          className="text-blue-400 hover:underline inline-block max-w-full truncate"
           title={fullMatch}
         >
           {truncatedDisplay}
@@ -177,11 +177,12 @@ function NostrMention({ pubkey }: { pubkey: string }) {
     <Link 
       to={`/${npub}`}
       className={cn(
-        "font-medium hover:underline",
+        "font-medium hover:underline inline-block max-w-full truncate align-bottom",
         hasRealName 
           ? "text-blue-400" 
           : "text-gray-400 hover:text-gray-300"
       )}
+      title={`@${displayName}`}
     >
       @{displayName}
     </Link>
@@ -208,7 +209,7 @@ function NotePreview({ eventId, identifier }: { eventId: string; identifier: str
 
   if (isLoading) {
     return (
-      <span className="text-blue-400 hover:underline">
+      <span className="text-blue-400 hover:underline inline-block max-w-full truncate">
         {truncateNostrId(`nostr:${identifier}`)}
       </span>
     );
@@ -218,7 +219,7 @@ function NotePreview({ eventId, identifier }: { eventId: string; identifier: str
     return (
       <Link 
         to={`/${identifier}`}
-        className="text-blue-400 hover:underline"
+        className="text-blue-400 hover:underline inline-block max-w-full truncate"
       >
         {truncateNostrId(`nostr:${identifier}`)}
       </Link>
