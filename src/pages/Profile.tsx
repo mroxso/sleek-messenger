@@ -181,15 +181,6 @@ export default function Profile() {
               Settings
             </Button>
 
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => navigate('/about')}
-            >
-              <Info className="h-4 w-4 mr-3" />
-              About Sleek
-            </Button>
-
             <Button
               variant="outline"
               className="w-full justify-start text-destructive border-destructive/20 hover:bg-destructive hover:text-destructive-foreground"

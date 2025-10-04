@@ -7,7 +7,6 @@ import EditProfilePage from "./pages/EditProfilePage";
 import ChatPage from "./pages/ChatPage";
 import { NIP19Page } from "./pages/NIP19Page";
 import SettingsPage from "./pages/SettingsPage";
-import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 export function AppRouter() {
@@ -20,7 +19,6 @@ export function AppRouter() {
         <Route path="/profile/edit" element={<EditProfilePage />} />
         <Route path="/chat/:pubkey" element={<ChatPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/about" element={<About />} />
         {/* NIP-19 route for npub1, note1, naddr1, nevent1, nprofile1 */}
         <Route path="/:nip19" element={<NIP19Page />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
